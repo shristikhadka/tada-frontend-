@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
+import Header from './Header';
 import './App.css';
 
 function App() {
@@ -26,7 +27,10 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <>
+                <Header />
+                <Dashboard />
+              </>
             </ProtectedRoute>
           }
         />
@@ -34,7 +38,10 @@ function App() {
           path="/profile"
           element={
             <ProtectedRoute>
-              <Profile />
+              <>
+                <Header />
+                <Profile />
+              </>
             </ProtectedRoute>
           }
         />

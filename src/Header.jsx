@@ -1,0 +1,22 @@
+import {clearAuthCredentials} from './utils/auth.js';
+import {useNavigate} from 'react-router-dom';
+import './Header.css';
+
+export default function Header()
+{
+    const navigate=useNavigate();
+
+    const logout=()=>{
+        clearAuthCredentials();
+        navigate('/login');
+    }
+    
+    return(
+        <div className="header-container">
+            <button className="logout-button" type="button" onClick={logout}>
+                Logout
+            </button>
+        </div>
+    );
+
+}
