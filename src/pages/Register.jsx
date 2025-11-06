@@ -78,7 +78,7 @@ export default function Register() {
               disabled={loading}
             />
           </div>
-          // ADD THIS NEW INPUT GROUP:
+       
         <div style={styles.inputGroup}>
           <label style={styles.label}>Confirm Password</label>
           <input
