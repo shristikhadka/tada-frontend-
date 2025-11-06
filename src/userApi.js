@@ -32,6 +32,13 @@ export const registerUser = (user) => {
   return publicClient.post('/public/register', user);
 };
 
+export const testCredentials = (username, password) => {
+  const credentials = btoa(`${username}:${password}`);
+  return axios.get('http://localhost:8080/user/me', {
+    headers: { 'Authorization': `Basic ${credentials}` }
+  });
+};
+
 // ========== USER ENDPOINTS (Requires authentication) ==========
 
 /**

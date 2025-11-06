@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { setAuthCredentials } from '../utils/auth';
-import axios from 'axios';
+import { testCredentials } from '../userApi.js';
 
 export default function Login() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error,setError]=useState("");
-  
   const [loading,setLoading]=useState(false);
   const navigate = useNavigate();
 
@@ -19,13 +18,7 @@ export default function Login() {
 
 
   try{
-    const credentials=btoa(`${username}:${password}`);
-    const response=await axios.get('http://localhost:8080/user/me',{
-      headers:{
-        'Authorization':`Basic ${credentials}`
-      }
-      
-    });
+    const response=await testCredentials(username,password);
     //if successsful
     if(response.data){
       setAuthCredentials(username,password);
