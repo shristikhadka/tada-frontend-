@@ -130,6 +130,35 @@
   font-weight: 700;
 }
 
+/* Search Section */
+.search-section {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: white;
+  background: white;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
 /* Todo List */
 .todo-list {
   list-style: none;

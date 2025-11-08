@@ -13,6 +13,7 @@ export default function TodoList() {
   const[editingId,setEditingId]=useState(null);
   const[editedTitle,setEditedTitle]=useState("");
   const [filter,setFilter]=useState("all");
+  const[searchTerm,setSearchTerm]=useState("");
   
 
   // Load all todos once on mount
@@ -113,6 +114,16 @@ export default function TodoList() {
         <span>{totalCount} total</span>
       </div>
 
+      <div className="search-section">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search todos..."
+          value={searchTerm}
+          onChange={(e)=>setSearchTerm(e.target.value)}
+        />
+      </div>
+
       {/*Filter Buttons*/}
       <div className="filter-buttons">
       <button
@@ -141,6 +152,11 @@ export default function TodoList() {
         {(() => {
           // Filter todos based on current filter
           const filteredTodos = todos.filter(todo => {
+            //first apply search
+            const matchedSearch=todo.title.toLowerCase().includes(searchTerm.toLowerCase());
+            if(!matchedSearch)return false
+
+            //then apply status filter
             if (filter === 'active') return !todo.completed;
             if (filter === 'completed') return todo.completed;
             return true; // 'all' - show all todos
@@ -152,9 +168,13 @@ export default function TodoList() {
               <div className="empty-state">
                 {todos.length === 0 
                   ? 'No tasks yet. Add one above!' 
+                  : searchTerm 
+                  ? 'No todos found matching your search!'
                   : filter === 'active' 
                   ? 'No active tasks!' 
-                  : 'No completed tasks!'}
+                  : filter === 'completed'
+                  ? 'No completed tasks!'
+                  : 'No tasks yet. Add one above!'}
               </div>
             );
           }
