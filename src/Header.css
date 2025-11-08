@@ -3,9 +3,11 @@
   top: 20px;
   right: 20px;
   z-index: 1000;
+  display: flex;
+  gap: 10px;
 }
 
-.logout-button {
+.header-button {
   padding: 12px 28px;
   background: rgba(255, 255, 255, 0.95);
   color: #667eea;
@@ -19,15 +21,19 @@
   backdrop-filter: blur(10px);
 }
 
-.logout-button:hover {
+.header-button:hover {
   background: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
   color: #764ba2;
 }
 
-.logout-button:active {
+.header-button:active {
   transform: translateY(0);
+}
+
+.logout-button {
+  /* Inherits all styles from .header-button */
 }
 
 /* Responsive */
@@ -37,7 +43,7 @@
     right: 15px;
   }
   
-  .logout-button {
+  .header-button {
     padding: 10px 20px;
     font-size: 14px;
   }

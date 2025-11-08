@@ -13,7 +13,14 @@ export default function Header()
     
     return(
         <div className="header-container">
-            <button className="logout-button" type="button" onClick={logout}>
+            <button
+            className="header-button profile-button" 
+            type="button"
+            onClick={()=>navigate('/profile')}
+            >
+                Profile
+            </button>
+            <button className="header-button logout-button" type="button" onClick={logout}>
                 Logout
             </button>
         </div>
