@@ -12,6 +12,7 @@ export default function TodoList() {
   const [newTodo, setNewTodo] = useState("");
   const[editingId,setEditingId]=useState(null);
   const[editedTitle,setEditedTitle]=useState("");
+  const [filter,setFilter]=useState("all");
 
   // Load all todos once on mount
   useEffect(() => {
@@ -101,11 +102,54 @@ export default function TodoList() {
         <button className="btn-add" onClick={handleAddTodo}>Add Task</button>
       </div>
 
+      {/*Filter Buttons*/}
+      <div className="filter-buttons">
+      <button
+      className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+      onClick={()=>setFilter('all')}
+      >
+        All
+      </button>
+      
+      <button
+      className={`filter-btn ${filter === 'active' ? 'active' : ''}`}
+      onClick={() => setFilter('active')}
+      >
+      Active
+      </button>
+      
+      <button
+      className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
+      onClick={() => setFilter('completed')}
+      >
+      Completed
+      </button>
+      </div>
+
       <ul className="todo-list">
-        {todos.length === 0 ? (
-          <div className="empty-state">No tasks yet. Add one above!</div>
-        ) : (
-          todos.map((todo) => (
+        {(() => {
+          // Filter todos based on current filter
+          const filteredTodos = todos.filter(todo => {
+            if (filter === 'active') return !todo.completed;
+            if (filter === 'completed') return todo.completed;
+            return true; // 'all' - show all todos
+          });
+
+          // Show empty state if no todos match filter
+          if (filteredTodos.length === 0) {
+            return (
+              <div className="empty-state">
+                {todos.length === 0 
+                  ? 'No tasks yet. Add one above!' 
+                  : filter === 'active' 
+                  ? 'No active tasks!' 
+                  : 'No completed tasks!'}
+              </div>
+            );
+          }
+
+          // Map over filtered todos
+          return filteredTodos.map((todo) => (
             <div key={todo.id} className="todo-item">
               <div className="todo-content">
                 {editingId === todo.id ? (
@@ -146,8 +190,8 @@ export default function TodoList() {
                 </button>
               </div>
             </div>
-          ))
-        )}
+          ));
+        })()}
       </ul>
     </div>
   );
