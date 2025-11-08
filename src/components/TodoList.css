@@ -101,6 +101,35 @@
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
 }
 
+/* Todo Statistics */
+.todo-stats {
+  text-align: center;
+  color: white;
+  font-size: 15px;
+  margin-bottom: 20px;
+  opacity: 0.95;
+  font-weight: 600;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+}
+
+.todo-stats span {
+  margin: 0 8px;
+  display: inline-block;
+}
+
+.todo-stats span:first-child {
+  color: #4CAF50;
+  font-weight: 700;
+}
+
+.todo-stats span:last-child {
+  color: #fff;
+  font-weight: 700;
+}
+
 /* Todo List */
 .todo-list {
   list-style: none;

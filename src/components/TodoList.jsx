@@ -13,6 +13,7 @@ export default function TodoList() {
   const[editingId,setEditingId]=useState(null);
   const[editedTitle,setEditedTitle]=useState("");
   const [filter,setFilter]=useState("all");
+  
 
   // Load all todos once on mount
   useEffect(() => {
@@ -53,12 +54,12 @@ export default function TodoList() {
     }
   };
 
-  // Mark todo as done
-  const handleMarkAsDone = async (id) => {
+  // Toggle todo completion (complete/incomplete)
+  const handleToggleComplete = async (id) => {
     const todo = todos.find((t) => t.id === id);
     if (!todo) return;
 
-    const updated = { ...todo, completed: true };
+    const updated = { ...todo, completed: !todo.completed };
     try {
       const res = await updateTodo(id, updated);
       setTodos((prev) =>
@@ -86,6 +87,9 @@ export default function TodoList() {
         console.error("Error updating todo",err)
     }
   }
+  const activeCount=todos.filter(todo=>!todo.completed).length;
+  const completedCount=todos.filter(todo=>todo.completed).length;
+  const totalCount=todos.length;
 
   return (
     <div className="todo-container">
@@ -100,6 +104,13 @@ export default function TodoList() {
           onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
         />
         <button className="btn-add" onClick={handleAddTodo}>Add Task</button>
+      </div>
+
+      {/* Todo Statistics */}
+      <div className="todo-stats">
+        <span>{completedCount} completed</span>
+        <span> {activeCount} active </span>
+        <span>{totalCount} total</span>
       </div>
 
       {/*Filter Buttons*/}
@@ -183,10 +194,10 @@ export default function TodoList() {
                 </button>
                 <button
                   className={`btn btn-done ${todo.completed ? 'completed' : ''}`}
-                  onClick={() => handleMarkAsDone(todo.id)}
-                  disabled={todo.completed}
+                  onClick={() => handleToggleComplete(todo.id)}
+                  //disabled={todo.completed}
                 >
-                  {todo.completed ? 'Done' : 'Mark Done'}
+                  {todo.completed ? 'Mark Incomplete' : 'Mark Done'}
                 </button>
               </div>
             </div>
