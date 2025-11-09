@@ -13,14 +13,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
-        <Route 
-          path="/login" 
-          element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Login />} 
-        />
-        <Route 
-          path="/register" 
-          element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Register />} 
-        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         
         {/* Protected routes */}
         <Route

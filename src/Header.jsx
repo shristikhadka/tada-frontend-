@@ -8,7 +8,8 @@ export default function Header()
 
     const logout=()=>{
         clearAuthCredentials();
-        navigate('/login');
+        // Force full page reload to reset all state
+        window.location.href = '/login';
     }
     
     return(

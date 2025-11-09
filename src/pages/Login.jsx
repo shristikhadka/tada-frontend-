@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import { setAuthCredentials } from '../utils/auth';
+import { setAuthCredentials, isAuthenticated } from '../utils/auth';
 import { testCredentials } from '../userApi.js';
 
 export default function Login() {
@@ -8,12 +8,31 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error,setError]=useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading,setLoading]=useState(false);
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [navigate]);
+
+  // Check for password change success message
+  useEffect(() => {
+    const msg = localStorage.getItem('passwordChangeSuccess');
+    if (msg) {
+      setError(''); // Clear any error
+      setSuccessMessage(msg);
+      localStorage.removeItem('passwordChangeSuccess');
+    }
+  }, []);
 
   const handleSubmit=async(e)=>{
     e.preventDefault();
     setError("");
+    setSuccessMessage(""); // Clear success message on submit
     setLoading(true);
 
 
@@ -37,6 +56,7 @@ export default function Login() {
           <h1 style={styles.title}>Welcome back</h1>
           <p style={styles.subtitle}>Sign in to continue to your dashboard</p>
           {error && <div style={styles.error}>{error}</div>}
+          {successMessage && <div style={styles.success}>{successMessage}</div>}
 
           <form onSubmit={handleSubmit} style={styles.form}>
             <div style={styles.inputGroup}>
@@ -117,6 +137,15 @@ const styles = {
     background: '#fee2e2',
     color: '#991b1b',
     border: '1px solid #fecaca',
+    padding: '10px 12px',
+    borderRadius: '8px',
+    marginBottom: '16px',
+    textAlign: 'center'
+  },
+  success: {
+    background: '#d1fae5',
+    color: '#065f46',
+    border: '1px solid #a7f3d0',
     padding: '10px 12px',
     borderRadius: '8px',
     marginBottom: '16px',

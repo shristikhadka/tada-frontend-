@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../userApi';
+import { isAuthenticated } from '../utils/auth';
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -9,6 +10,13 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [navigate]);
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
