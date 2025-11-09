@@ -7,6 +7,7 @@
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   padding: 20px;
+  padding-top: 100px; /* Add top padding to avoid header overlap */
 }
 
 @keyframes gradientShift {

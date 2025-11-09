@@ -24,6 +24,10 @@ export default function Header()
             <button className="header-button logout-button" type="button" onClick={logout}>
                 Logout
             </button>
+            <button className="header-button admin-button" type="button"
+                onClick={()=>navigate('/admin-dashboard')}>
+                Admin
+            </button>
         </div>
     );
 

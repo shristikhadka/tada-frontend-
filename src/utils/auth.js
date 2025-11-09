@@ -25,6 +25,11 @@ export const getUsername=()=>{
 
 // Check if user is logged in
 export const isAuthenticated = () => {
-    return !!localStorage.getItem('authToken');
+  return !!localStorage.getItem('authToken');
+};
+
+// Check if user has ADMIN role
+export const isAdmin = (user) => {
+  return user?.roles?.includes('ADMIN') || false;
 };
 
