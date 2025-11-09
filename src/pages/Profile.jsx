@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCurrentUser, changePassword, updateProfile } from '../userApi';
+import { getCurrentUser, changePassword, updateProfile , deleteAccount} from '../userApi';
 import {clearAuthCredentials} from '../utils/auth';
 import './Profile.css';
 
@@ -12,10 +12,10 @@ export default function Profile() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
+  const [deleteMessage,setDeleteMessage]=useState("");
   const[username,setUsername]=useState("");
-
-
-
+  const[currentPassword,setCurrentPassword]=useState("");
+ 
   useEffect(()=>{
     loadUser();
   },[]);
@@ -86,6 +86,27 @@ export default function Profile() {
       }
     }
 
+    const handleDeleteAccount=async(e)=>{
+      e.preventDefault();
+      setDeleteMessage("");
+      
+      // Validate confirmation text
+      if(currentPassword !== 'DELETE'){
+        setDeleteMessage("Please type 'DELETE' to confirm account deletion.");
+        return;
+      }
+      
+      try{
+        await deleteAccount();
+        setDeleteMessage("Account deleted successfully! Redirecting to login...");
+        setTimeout(() => {
+          clearAuthCredentials();
+          window.location.href = '/login';
+        }, 2000);
+      }catch(err){
+        setDeleteMessage("Error deleting account: " + (err.response?.data?.message || err.message));
+      }
+    }
     return (
       <div className="profile-container">
         <div className="profile-card">
@@ -181,6 +202,42 @@ export default function Profile() {
             
             <button type="submit" className="profile-button">
               Update Username
+            </button>
+          </form>
+
+          <div className="section-divider"></div>
+
+          <form onSubmit={handleDeleteAccount} className="password-form">
+            <h2 className="section-title">Delete Account</h2>
+            <p style={{ color: '#dc2626', fontSize: '14px', marginBottom: '20px' }}>
+              Warning: This action cannot be undone. All your data will be permanently deleted.
+            </p>
+            
+            <div className="input-group">
+              <label className="input-label">Type "DELETE" to confirm</label>
+              <input 
+                type="text" 
+                placeholder="Type DELETE to confirm" 
+                value={currentPassword}
+                onChange={(e)=>setCurrentPassword(e.target.value)}
+                className="profile-input"
+                required
+              />
+            </div>
+            
+            {deleteMessage && (
+              <div className={`message ${deleteMessage.includes('Error') ? 'error-message' : 'success-message'}`}>
+                {deleteMessage}
+              </div>
+            )}
+            
+            <button 
+              type="submit" 
+              className="profile-button" 
+              style={{ background: '#dc2626' }}
+              disabled={currentPassword !== 'DELETE'}
+            >
+              Delete Account
             </button>
           </form>
         </div>
