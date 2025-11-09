@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCurrentUser } from '../userApi';
-import { changePassword } from '../userApi';
+import { getCurrentUser, changePassword, updateProfile } from '../userApi';
 import {clearAuthCredentials} from '../utils/auth';
 import './Profile.css';
 
@@ -11,7 +10,10 @@ export default function Profile() {
   const [oldPassword, setOldPassword] = useState("");
   const[newPassword,setNewPassword]=useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [usernameMessage, setUsernameMessage] = useState("");
+  const[username,setUsername]=useState("");
+
 
 
   useEffect(()=>{
@@ -22,7 +24,8 @@ export default function Profile() {
       try{
         const res=await getCurrentUser();
         setUser(res.data);
-
+        // Initialize username field with current username
+        setUsername(res.data.userName);
       }catch(err){
         console.log("Error loading user",err);
       }finally{
@@ -32,15 +35,15 @@ export default function Profile() {
 
     const handleChangePassword=async(e)=>{
       e.preventDefault();
-      setMessage("");
+      setPasswordMessage("");
 
       if(newPassword!==confirmPassword){
-        setMessage("New Passwords don't match!")
+        setPasswordMessage("New Passwords don't match!")
         return;
       }
       try{
         await changePassword(oldPassword,newPassword);
-        setMessage("Password changed successfully! Redirecting to login...");
+        setPasswordMessage("Password changed successfully! Redirecting to login...");
         // Store success message in localStorage
         localStorage.setItem('passwordChangeSuccess', 'Password changed successfully! Please log in with your new password.');
         // Wait 1.5 seconds then logout and redirect
@@ -49,7 +52,37 @@ export default function Profile() {
           window.location.href = '/login';
         },1500);
       }catch(err){
-        setMessage("Error changing password: " + (err.response?.data?.message || err.message));
+        setPasswordMessage("Error changing password: " + (err.response?.data?.message || err.message));
+      }
+    }
+    const handleUpdateUsername=async(e)=>{
+      e.preventDefault();
+      setUsernameMessage("");
+      
+      // Validate username is not empty
+      if(!username || username.trim() === ""){
+        setUsernameMessage("Username cannot be empty!");
+        return;
+      }
+      
+      // Check if user exists and if username actually changed
+      if(user && username === user.userName){
+        setUsernameMessage("Username is the same as current username!");
+        return;
+      }
+      
+      try{
+        const res=await updateProfile({ userName: username });
+        // Update user state with new data
+        setUser(res.data);
+        setUsernameMessage("Username updated successfully! Redirecting to login...");
+        // After username change, user must login again (Basic Auth uses username)
+        setTimeout(() => {
+          clearAuthCredentials();
+          window.location.href = '/login';
+        }, 2000);
+      }catch(err){
+        setUsernameMessage("Error updating username: " + (err.response?.data?.message || err.message));
       }
     }
 
@@ -112,14 +145,42 @@ export default function Profile() {
               />
             </div>
             
-            {message && (
-              <div className={`message ${message.includes('Error') || message.includes("don't match") ? 'error-message' : 'success-message'}`}>
-                {message}
+            {passwordMessage && (
+              <div className={`message ${passwordMessage.includes('Error') || passwordMessage.includes("don't match") ? 'error-message' : 'success-message'}`}>
+                {passwordMessage}
               </div>
             )}
             
             <button type="submit" className="profile-button">
               Change Password
+            </button>
+          </form>
+
+          <div className="section-divider"></div>
+
+          <form onSubmit={handleUpdateUsername} className="password-form">
+            <h2 className="section-title">Update Username</h2>
+            
+            <div className="input-group">
+              <label className="input-label">New Username</label>
+              <input 
+                type="text" 
+                placeholder="Enter new username" 
+                value={username}
+                onChange={(e)=>setUsername(e.target.value)}
+                className="profile-input"
+                required
+              />
+            </div>
+            
+            {usernameMessage && (
+              <div className={`message ${usernameMessage.includes('Error') || usernameMessage.includes('same') || usernameMessage.includes('empty') ? 'error-message' : 'success-message'}`}>
+                {usernameMessage}
+              </div>
+            )}
+            
+            <button type="submit" className="profile-button">
+              Update Username
             </button>
           </form>
         </div>
