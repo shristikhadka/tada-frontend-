@@ -1,15 +1,16 @@
 import axios from 'axios';
 import { getAuthToken } from './utils/auth';
+import { API_BASE_URL } from './config';
 
 // Create a separate axios instance for public endpoints (no auth needed)
 const publicClient = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: API_BASE_URL,
 });
 
 
 // Actually, let's create it here too for consistency
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: API_BASE_URL,
 });
 
 // Add auth header to authenticated requests
@@ -34,7 +35,7 @@ export const registerUser = (user) => {
 
 export const testCredentials = (username, password) => {
   const credentials = btoa(`${username}:${password}`);
-  return axios.get('http://localhost:8080/user/me', {
+  return axios.get(`${API_BASE_URL}/user/me`, {
     headers: { 'Authorization': `Basic ${credentials}` }
   });
 };

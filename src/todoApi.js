@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { getAuthToken } from './utils/auth';
+import { API_BASE_URL } from './config';
 
 //create axios instance with auth interceptor
 const apiClient=axios.create({
-    baseURL:"http://localhost:8080",
+    baseURL: API_BASE_URL,
 });
  // Add auth header to every request
  apiClient.interceptors.request.use((config)=>{
