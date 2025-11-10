@@ -1,4 +1,4 @@
-import { getAllUsers } from "../adminApi";
+import { getAllUsers, deleteUser } from "../adminApi";
 import { useState, useEffect } from "react";
 import './AdminDashboard.css';
 
@@ -6,6 +6,8 @@ export default function AdminDashboard(){
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [deleteMessage, setDeleteMessage] = useState("");
+    const [deletingUserId, setDeletingUserId] = useState(null);
 
     useEffect(() => {
         loadUsers();
@@ -15,6 +17,7 @@ export default function AdminDashboard(){
         try{
             setLoading(true);
             setError("");
+            setDeleteMessage("");
             const res = await getAllUsers();
             setUsers(res.data);
         }catch(err){
@@ -22,6 +25,27 @@ export default function AdminDashboard(){
             setError("Failed to load users. Please check if you have ADMIN role.");
         }finally{
             setLoading(false);
+        }
+    }
+
+    const handleDeleteUser = async (id) => {
+        // Confirm deletion
+        if (!window.confirm(`Are you sure you want to delete user with ID ${id}?`)) {
+            return;
+        }
+
+        try{
+            setDeletingUserId(id);
+            setDeleteMessage("");
+            await deleteUser(id);
+            setDeleteMessage("User deleted successfully!");
+            // Refresh the user list
+            await loadUsers();
+        }catch(err){
+            console.error("Error deleting user:", err);
+            setDeleteMessage("Error deleting user: " + (err.response?.data?.message || err.message));
+        }finally{
+            setDeletingUserId(null);
         }
     }
 
@@ -47,6 +71,12 @@ export default function AdminDashboard(){
                             </button>
                         </div>
 
+                        {deleteMessage && (
+                            <div className={`message ${deleteMessage.includes('Error') ? 'error-message' : 'success-message'}`}>
+                                {deleteMessage}
+                            </div>
+                        )}
+
                         {users.length === 0 ? (
                             <div className="no-users">No users found</div>
                         ) : (
@@ -57,6 +87,7 @@ export default function AdminDashboard(){
                                             <th>ID</th>
                                             <th>Username</th>
                                             <th>Roles</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -72,6 +103,15 @@ export default function AdminDashboard(){
                                                             </span>
                                                         ))}
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <button 
+                                                        className="delete-button"
+                                                        onClick={() => handleDeleteUser(user.id)}
+                                                        disabled={deletingUserId === user.id}
+                                                    >
+                                                        {deletingUserId === user.id ? "Deleting..." : "Delete"}
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}
