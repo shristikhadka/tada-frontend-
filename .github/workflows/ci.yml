@@ -1,0 +1,88 @@
+# Frontend CI/CD Workflow
+# This file tells GitHub Actions what to do when you push code
+
+name: Frontend CI
+
+# STEP 1: WHEN TO RUN
+# This tells GitHub WHEN to run this workflow
+on:
+  # Run on every push to main branch
+  push:
+    branches: [ main ]
+  # Run on every pull request to main branch
+  pull_request:
+    branches: [ main ]
+  # Allow manual trigger (you can run it manually from GitHub)
+  workflow_dispatch:
+
+# STEP 2: WHAT TO RUN (JOBS)
+# Jobs are tasks that run in parallel or sequentially
+jobs:
+  # Job name: "test" - This job runs linter and builds the app
+  test:
+    # Run on Ubuntu Linux (latest version)
+    # GitHub provides free virtual machines (runners) to run your code
+    runs-on: ubuntu-latest
+
+    # STEP 3: STEPS TO EXECUTE
+    # Steps are commands that run in order
+    steps:
+      # Step 1: Checkout code from GitHub
+      # This downloads your code to the virtual machine
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js
+      # This installs Node.js on the virtual machine
+      # Your React app needs Node.js to run
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Node.js version to install
+          # You can specify a version like '18' or '20'
+          # Using 'lts/*' gets the latest LTS (Long Term Support) version
+          node-version: '20'
+          # Cache npm dependencies (makes builds faster)
+          # npm downloads packages (dependencies) - caching saves them for next run
+          cache: 'npm'
+          # Look for package-lock.json in the root directory
+          cache-dependency-path: package-lock.json
+
+      # Step 3: Install dependencies
+      # This installs all npm packages listed in package.json
+      # npm install reads package.json and downloads all dependencies
+      - name: Install dependencies
+        run: npm ci
+        # npm ci is faster and more reliable than npm install for CI/CD
+        # It does a clean install from package-lock.json
+        # It's perfect for automated environments
+
+      # Step 4: Run linter
+      # This checks your code for style and potential errors
+      # ESLint analyzes your code and reports issues
+      - name: Run linter
+        run: npm run lint
+        # If linting fails, the workflow stops here
+        # This ensures code quality before building
+
+      # Step 5: Build application
+      # This compiles your React app and creates production build
+      # Vite bundles your code, optimizes it, and creates dist/ folder
+      - name: Build application
+        run: npm run build
+        # If build fails, the workflow stops here
+        # This ensures your code compiles correctly
+
+      # Step 6: Upload build artifacts (optional)
+      # This saves the built files so you can download them later
+      # Useful if you want to deploy or test the built files
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          # Name of the artifact
+          name: frontend-build
+          # What to upload (the dist folder contains the built app)
+          path: dist/
+          # How long to keep it (7 days)
+          retention-days: 7
+
